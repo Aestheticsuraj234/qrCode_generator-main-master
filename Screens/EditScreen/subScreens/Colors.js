@@ -1,15 +1,12 @@
-import { StyleSheet, Text, View, Pressable, ScrollView, RefreshControl, TextInput } from 'react-native';
+﻿import { StyleSheet, Text, View, Pressable, ScrollView, RefreshControl, TextInput } from 'react-native';
 import React, { useContext, useState, useCallback, useEffect } from 'react';
 import QRCodeComponent from '../../../Components/QRCodeComponent';
 import { QrCodeContext } from '../../../context/QrCodeContext';
 import Toggle from 'react-native-toggle-input'
-``
 import { ColorPicker } from 'react-native-color-picker'
 import Slider from '@react-native-community/slider';
 import LinearDirection from '../../../Components/LinearDirection';
 import { useNavigation } from '@react-navigation/native';
-
-
 
 
 const Colors = () => {
@@ -44,14 +41,23 @@ const Colors = () => {
     qrCodeLogoBorderRadius,
     qrCodeLogo,
     setQRCodeEnableLinearGradient,
-    setQRCodeBackgroundColor
-
-  } = useContext(QrCodeContext);
+    setQRCodeBackgroundColor } = useContext(QrCodeContext);
+  const navigation = useNavigation();
 
   useEffect(() => {
     setQRCodeLinearGradient([color1, color2]);
   }, [color1, color2]);
 
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     // Clear the QR code when the screen comes into focus
+  //     // setQR("");
+  //     setColor1("");
+  //     setColor2("");
+  //   });
+
+  //   return unsubscribe;
+  // }, [navigation]);
   // !THIS IS ON REFRESH FUNCTION TRIGGER ONLY WHEN WE SCROLLDOWN THE SCREEN AND REFERSH THE STATE OF THE QRCODE AN
   const onRefresh = useCallback(() => {
 
@@ -60,8 +66,8 @@ const Colors = () => {
       setRefreshing(false);
     }, 2000);
     setQR("");
-    setColor1(""),
-      setColor2(""),
+    setColor1("");
+    setColor2("");
   }, []);
 
 

@@ -31,6 +31,7 @@ export default function UrlScreen() {
     setQR("")
 
   }, []);
+  
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
         // Clear the QR code when the screen comes into focus

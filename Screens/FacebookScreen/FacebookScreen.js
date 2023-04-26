@@ -64,6 +64,7 @@ export default function FacebookScreen() {
 
         <View style={styles.qr}>
           <Pressable onPress={saveQRCode}>
+            
             {QR && <QRCodeComponent  key={QR} size={240} logoSize={100} qrCodeValue={QR} getRef={setQRref} backgroundColor="#fff" />}
           </Pressable>
         </View>

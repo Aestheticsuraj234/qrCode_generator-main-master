@@ -28,44 +28,16 @@ export default function TextScreen() {
 }, [navigation]);
 
   const maxChars = 300;
-  const {  clearQRCode,
-    navigateToEdit,
-    generateContactQRCode,
+  const {  
     text,
     saveQRCode,
     QR,
-    setInput,
     setQRref,
     generateTextQRCode,
     setText,
-    generateQRCode,
-    generateMailQRCode,
     setQR,
-    input,
     qrCodeSize,
-    setQRCodeSize,
-    qrCodeColor,
-    setQRCodeColor,
-    qrCodeBackgroundColor,
-    setQRCodeBackgroundColor,
-    qrCodeLogo,
-    setQRCodeLogo,
-    qrCodeLogoSize,
-    setQRCodeLogoSize,
-    qrCodeLogoBackgroundColor,
-    setQRCodeLogoBackgroundColor,
-    qrCodeLogoMargin,
-    setQRCodeLogoMargin,
-    qrCodeLogoBorderRadius,
-    setQRCodeLogoBorderRadius,
-    qrCodeQuietZone,
-    setQRCodeQuietZone,
-    qrCodeEnableLinearGradient,
-    setQRCodeEnableLinearGradient,
-    qrCodeGradientDirection,
-    setQRCodeGradientDirection,
-    qrCodeLinearGradient,
-    setQRCodeLinearGradient, } = useContext(QrCodeContext)
+   } = useContext(QrCodeContext)
 
   return (
     <ScrollView
@@ -91,18 +63,9 @@ export default function TextScreen() {
             {QR && <QRCodeComponent
             key={QR} 
             size={qrCodeSize} 
-            logo={qrCodeLogo} 
-            logoSize={qrCodeLogoSize} 
             qrCodeValue={QR} 
             getRef={setQRref} 
-            backgroundColor={qrCodeBackgroundColor}  
-            logoBackgroundColor={qrCodeLogoBackgroundColor}
-            logoMargin={qrCodeLogoMargin}
-            logoBorderRadius={qrCodeLogoBorderRadius}
-            enableLinearGradient={qrCodeEnableLinearGradient}
-            gradientDirection={qrCodeGradientDirection}
-            linearGradient={qrCodeLinearGradient}       
-
+            backgroundColor={"#fff"}  
             />}
           </Pressable>
         </View>
