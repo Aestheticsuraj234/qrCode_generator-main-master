@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Pressable, Image, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
-import React, { useContext, useState, useCallback  , useEffect} from 'react';
+import React, { useContext, useState, useCallback, useEffect } from 'react';
 import QRCodeComponent from '../../../Components/QRCodeComponent';
 import { QrCodeContext } from '../../../context/QrCodeContext';
 import * as ImagePicker from 'expo-image-picker';
@@ -7,8 +7,9 @@ import { AntDesign } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native';
 const Logo = () => {
- 
+
   const [refreshing, setRefreshing] = useState(false);
+  const navigation = useNavigation();
   const {
 
     qrCodeColor,
@@ -44,6 +45,12 @@ const Logo = () => {
   }, []);
 
 
+  useEffect(() => {
+    if (setQRCodeLogo) {
+      setQRCodeLogo("")
+
+    }
+  }, [])
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -94,7 +101,6 @@ const Logo = () => {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-
     >
       <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'center' }}>
         <View style={styles.UploadBox}>

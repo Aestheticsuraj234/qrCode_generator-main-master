@@ -2,8 +2,8 @@
 import React, { useContext, useState, useCallback, useEffect } from 'react';
 import QRCodeComponent from '../../../Components/QRCodeComponent';
 import { QrCodeContext } from '../../../context/QrCodeContext';
-import Toggle from 'react-native-toggle-input'
-import { ColorPicker } from 'react-native-color-picker'
+import Toggle from 'react-native-toggle-input';
+import { ColorPicker } from 'react-native-color-picker';
 import Slider from '@react-native-community/slider';
 import LinearDirection from '../../../Components/LinearDirection';
 import { useNavigation } from '@react-navigation/native';
@@ -41,26 +41,33 @@ const Colors = () => {
     qrCodeLogoBorderRadius,
     qrCodeLogo,
     setQRCodeEnableLinearGradient,
-    setQRCodeBackgroundColor } = useContext(QrCodeContext);
+    setQRCodeBackgroundColor
+  } = useContext(QrCodeContext);
+
   const navigation = useNavigation();
 
   useEffect(() => {
     setQRCodeLinearGradient([color1, color2]);
   }, [color1, color2]);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     // Clear the QR code when the screen comes into focus
-  //     // setQR("");
-  //     setColor1("");
-  //     setColor2("");
-  //   });
 
-  //   return unsubscribe;
-  // }, [navigation]);
-  // !THIS IS ON REFRESH FUNCTION TRIGGER ONLY WHEN WE SCROLLDOWN THE SCREEN AND REFERSH THE STATE OF THE QRCODE AN
+  useEffect(() => {
+    if (qrCodeEnableLinearGradient) {
+      setQRCodeEnableLinearGradient(false)
+      setIsvisible1(false)
+      setIsvisible2(false)
+      setQRCodeBackgroundColor("#fff")
+    }
+    else {
+      setQRCodeColor("#000")
+      setQRCodeBackgroundColor("#fff")
+          }
+  }, []);
+
+  
+
+  // function to handle the refresh
   const onRefresh = useCallback(() => {
-
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
@@ -70,31 +77,27 @@ const Colors = () => {
     setColor2("");
   }, []);
 
-
-  //handle toggle functions
-  // !Handle on true
+  // function to handle toggle
   const toggletrue = () => {
-
     setQRCodeEnableLinearGradient(true)
     setIsvisible(false)
   }
 
-  // !handle on false
   const toggleFalse = () => {
     setQRCodeEnableLinearGradient(false)
     setIsvisible1(false)
     setIsvisible2(false)
-
   }
 
-  // function for handling the color 
+  // function to handle colors
   const handleColor = () => {
     setIsvisible(!isVisible)
-
   }
+
   const handleColor1 = () => {
     setIsvisible1(!isVisible1)
   }
+
   const handleColor2 = () => {
     setIsvisible2(!isVisible2)
   }
