@@ -1,4 +1,4 @@
-﻿import { StyleSheet, Text, View, Pressable, ScrollView, RefreshControl, TextInput } from 'react-native';
+﻿import { StyleSheet, Text, View, Pressable, ScrollView, RefreshControl, Alert } from 'react-native';
 import React, { useContext, useState, useCallback, useEffect } from 'react';
 import QRCodeComponent from '../../../Components/QRCodeComponent';
 import { QrCodeContext } from '../../../context/QrCodeContext';
@@ -45,6 +45,8 @@ const Colors = () => {
   } = useContext(QrCodeContext);
 
   const navigation = useNavigation();
+  const hasUnsavedChanges = Boolean([qrCodeEnableLinearGradient, qrCodeColor, qrCodeBackgroundColor]);
+
 
   useEffect(() => {
     setQRCodeLinearGradient([color1, color2]);
@@ -61,10 +63,41 @@ const Colors = () => {
     else {
       setQRCodeColor("#000")
       setQRCodeBackgroundColor("#fff")
-          }
+    }
   }, []);
 
-  
+  React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        if (!hasUnsavedChanges) {
+          // If we don't have unsaved changes, then we don't need to do anything
+          return;
+        }
+
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          'Discard changes?',
+          'You have unsaved changes. Are you sure to discard them and leave the screen?',
+          [
+            { text: "Don't leave", style: 'cancel', onPress: () => { } },
+            {
+              text: 'Discard',
+              style: 'destructive',
+              // If the user confirmed, then we dispatch the action we blocked earlier
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ]
+        );
+      }),
+    [navigation, hasUnsavedChanges]
+  );
+
+
+
 
   // function to handle the refresh
   const onRefresh = useCallback(() => {
