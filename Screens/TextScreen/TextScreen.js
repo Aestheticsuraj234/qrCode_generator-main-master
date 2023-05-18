@@ -1,10 +1,12 @@
 import { Pressable, StyleSheet, Text, TextInput, View, ScrollView, RefreshControl } from 'react-native';
-
 import QRCodeComponent from '../../Components/QRCodeComponent';
-
-import { useContext, useState, useCallback ,  useEffect } from 'react';
-import { QrCodeContext } from '../../context/QrCodeContext'
+import { useContext, useState, useCallback, useEffect } from 'react';
+import { QrCodeContext } from '../../context/QrCodeContext';
 import { useNavigation } from '@react-navigation/native';
+import { Entypo } from '@expo/vector-icons';
+import { ViewShot } from 'react-native-view-shot';
+
+import * as Sharing from 'expo-sharing';
 
 export default function TextScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -14,31 +16,45 @@ export default function TextScreen() {
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-    setQR("")
-    setText("")
+    setQR('');
+    setText('');
   }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-        // Clear the QR code when the screen comes into focus
-        setQR("");
+      // Clear the QR code when the screen comes into focus
+      setQR('');
+      setText('');
     });
 
     return unsubscribe;
-}, [navigation]);
+  }, [navigation]);
 
   const maxChars = 300;
-  const {  
+  const 
     text,
     saveQRCode,
     QR,
+    QRref,
     setQRref,
     generateTextQRCode,
     setText,
     setQR,
     qrCodeSize,
-   } = useContext(QrCodeContext)
+  } = useContext(QrCodeContext);
 
+  const handleShareQr = async () => {
+    if (QR) {
+      try {
+        const uri = await QRref.capture();
+        await Sharing.shareAsync(uri);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+ 
   return (
     <ScrollView
       refreshControl={
@@ -48,29 +64,69 @@ export default function TextScreen() {
       <View style={styles.container}>
         <Text style={styles.title}><Text style={styles.icon}>QR</Text> Code Generator</Text>
         <View style={styles.field}>
-          <TextInput style={styles.input} cursorColor={'blueviolet'} selectionColor={'blueviolet'} onChangeText={setText} placeholder='e.g Enter-Text' maxLength={maxChars} />
+          <TextInput
+            style={styles.input}
+            cursorColor={'blueviolet'}
+            selectionColor={'blueviolet'}
+            onChangeText={setText}
+            placeholder="e.g Enter-Text"
+            maxLength={maxChars}
+          />
           <Pressable onPress={generateTextQRCode}>
             <Text style={styles.button}>Generate</Text>
           </Pressable>
         </View>
         <View style={styles.charCounter}>
-          <Text style={{ color: text.length > maxChars ? 'red' : 'gray' }}>{text.length}/{maxChars}</Text>
+          <Text style={{ color: text.length > maxChars ? 'red' : 'gray' }}>
+            {text.length}/{maxChars}
+          </Text>
         </View>
-
 
         <View style={styles.qr}>
-          <Pressable onPress={saveQRCode}>
-            {QR && <QRCodeComponent
-            key={QR} 
-            size={qrCodeSize} 
-            qrCodeValue={QR} 
-            getRef={setQRref} 
-            backgroundColor={"#fff"}  
-            />}
+          <Pressable
+            style={{ justifyContent: 'center', alignItems: 'center', gap: 12 }}
+            onPress={saveQRCode}
+          >
+            {QR && (
+              <>
+                <ViewShot
+                  ref={QRref}
+                  options={{ format: 'png', quality: 1 }}
+                >
+                  <QRCodeComponent
+                    key={QR}
+                    size={qrCodeSize}
+                    qrCodeValue={QR}
+                    getRef={setQRref}
+                    backgroundColor={'#fff'}
+                  />
+                </ViewShot>
+                <Entypo
+                  name="share"
+                  size={24}
+                  color="white"
+                  onPress={handleShareQr}
+                  style={{
+                    backgroundColor: '#7286d3',
+                    padding: 10,
+                    borderRadius: 50,
+                    textAlign: 'center',
+                  }}
+                />
+              </>
+            )}
           </Pressable>
         </View>
-        {QR && <Text onPress={() => navigation.navigate('Edit-QR')} style={{ color: 'green', fontWeight: 'bold', paddingVertical: 20 }}>Edit QR</Text>}
-        {QR && <Text style={styles.instraction}>Click The <Text style={styles.instraicon}>QR</Text> Code to save it</Text>}
+
+        {QR && (
+          <Text
+            onPress={() => navigation.navigate('Edit-QR')}
+            style={{ color: 'green', fontWeight: 'bold', paddingVertical: 20 }}
+          >
+            Edit QR
+          </Text>
+        )}
+        {QR && <Text style={styles.instruction}>Click The <Text style={styles.icon}>QR</Text> Code to save it</Text>}
       </View>
     </ScrollView>
   );
@@ -78,31 +134,31 @@ export default function TextScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
+    position: 'relative',
     flex: 1,
     paddingHorizontal: 40,
     paddingVertical: 40,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   title: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
   },
 
   icon: {
-    color: "#7286D3"
+    color: '#7286D3',
   },
 
   field: {
     width: 400,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: "row",
-    marginBottom: 30
+    flexDirection: 'row',
+    marginBottom: 30,
   },
 
   input: {
@@ -112,14 +168,14 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     marginRight: 10,
     borderRadius: 10,
-    borderColor: "gray",
+    borderColor: 'gray',
   },
 
   button: {
     padding: 12,
     borderRadius: 10,
-    color: "white",
-    backgroundColor: "#7286d3",
+    color: 'white',
+    backgroundColor: '#7286d3',
   },
 
   qr: {
@@ -129,26 +185,22 @@ const styles = StyleSheet.create({
     width: 250,
   },
 
-  instraction: {
+  instruction: {
     marginTop: 40,
-    color: "#adadad"
-  },
-
-  instraicon: {
-    color: "#bf88f3"
+    color: '#adadad',
   },
 
   logoHolder: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    position: "relative",
+    position: 'relative',
   },
 
   logo: {
     height: 40,
     width: 40,
-    opacity: 0.3
+    opacity: 0.3,
   },
   charCounter: {
     position: 'relative',
@@ -159,5 +211,4 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginLeft: 0,
   },
-
 });

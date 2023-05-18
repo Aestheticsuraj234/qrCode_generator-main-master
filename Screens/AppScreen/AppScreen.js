@@ -72,14 +72,14 @@ export default function AppScreen() {
             onChangeText={setIosLink}
             placeholder='iOS-app-link'
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             cursorColor={'blueviolet'}
             selectionColor={'blueviolet'}
             value={defaultLink}
             onChangeText={setDefaultLink}
             placeholder='Default-app-link'
-          />
+          /> */}
 
           <Pressable onPress={handleAppGenerateQRCode}>
             <Text style={styles.button}>Generate</Text>

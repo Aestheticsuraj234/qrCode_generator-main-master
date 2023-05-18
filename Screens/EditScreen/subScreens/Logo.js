@@ -32,8 +32,8 @@ const Logo = () => {
     qrCodeLogo, setQRCodeLogo,
 
   } = useContext(QrCodeContext);
-  const hasUnsavedChanges = Boolean(qrCodeLogo);
 
+  const hasUnsavedChanges = Boolean(qrCodeLogo);
 
   const onRefresh = useCallback(() => {
 
@@ -90,37 +90,37 @@ const Logo = () => {
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
+  
     if (status !== 'granted') {
       alert('Sorry, we need camera roll permissions to make this work!');
       return;
     }
-
+  
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-
+  
     if (!result.canceled && result.assets.length > 0) {
       const selectedAsset = result.assets[0];
-
+  
       // Encode the image in base64
       const base64 = await FileSystem.readAsStringAsync(selectedAsset.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-
+  
       // Save the encoded image to the state
       setQRCodeLogo(`data:image/png;base64,${base64}`);
-
+  
       const info = await FileSystem.getInfoAsync(
         FileSystem.documentDirectory + 'logo.png'
       );
       if (info.exists) {
         await FileSystem.deleteAsync(FileSystem.documentDirectory + 'logo.png');
       }
-
+  
       // Save the encoded image to the file system
       await FileSystem.writeAsStringAsync(
         FileSystem.documentDirectory + 'logo.png',
@@ -131,6 +131,7 @@ const Logo = () => {
       );
     }
   };
+  
 
   return (
     <ScrollView

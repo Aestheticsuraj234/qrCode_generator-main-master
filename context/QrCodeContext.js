@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from 'react'
-import { Platform } from 'react-native';
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import Toast from 'react-native-root-toast';
@@ -21,7 +20,7 @@ export const QrCodeProvider = ({ children }) => {
   const [qrCodeLogo, setQRCodeLogo] = useState(null);
   const [qrCodeLogoSize, setQRCodeLogoSize] = useState(50);
   const [qrCodeLogoBackgroundColor, setQRCodeLogoBackgroundColor] = useState(qrCodeBackgroundColor);
-  const [qrCodeLogoMargin, setQRCodeLogoMargin] = useState(6);
+  const [qrCodeLogoMargin, setQRCodeLogoMargin] = useState(4);
   const [qrCodeLogoBorderRadius, setQRCodeLogoBorderRadius] = useState(3);
   const [qrCodeQuietZone, setQRCodeQuietZone] = useState(10);
   const [qrCodeEnableLinearGradient, setQRCodeEnableLinearGradient] = useState(false);
@@ -146,6 +145,7 @@ export const QrCodeProvider = ({ children }) => {
         saveQRCode,
         QR,
         setInput,
+        QRref,
         setQRref,
         generateTextQRCode,
         setText,
