@@ -5,9 +5,9 @@ import { QrCodeContext } from '../../context/QrCodeContext';
 import { useNavigation } from '@react-navigation/native';
 import { BottomSheet } from 'react-native-btr';
 import { Entypo } from '@expo/vector-icons';
-import { FileSystem } from 'expo';
+import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import * as MediaLibrary from 'expo-media-library';
+
 import { SocialIcon } from 'react-native-elements';
 
 export default function TextScreen() {
@@ -48,6 +48,10 @@ export default function TextScreen() {
   
     setVisible(!visible); // Set the visibility of the BottomSheet to false after sharing
   };
+  useEffect(() => {
+    
+  }, [])
+  
 
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
