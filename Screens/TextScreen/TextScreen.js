@@ -5,47 +5,48 @@ import { QrCodeContext } from '../../context/QrCodeContext';
 import { useNavigation } from '@react-navigation/native';
 import { BottomSheet } from 'react-native-btr';
 import { Entypo } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
-import { SocialIcon } from 'react-native-elements';
+import { FileSystem } from 'expo';
 import * as Sharing from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
+import { SocialIcon } from 'react-native-elements';
 
 export default function TextScreen() {
+
   const [visible, setVisible] = useState(false);
   const [isSharingInProgress, setIsSharingInProgress] = useState(false);
 
   const shareQrCode = async () => {
-    // Function to share the QR code image to different platforms using expo sharing
-
+    // Function to share the QR code image to different platforms using Expo sharing
+  
     if (Platform.OS === 'android' && !isSharingInProgress) {
-      // Check if the platform is android and sharing is not in progress
+      // Check if the platform is Android and sharing is not in progress
       try {
-
         setIsSharingInProgress(true); // Set the sharing in progress to true
         const qrCodePath = FileSystem.documentDirectory + 'QRCode.png';
         const options = {
-
           dialogTitle: 'Share QR Code',
           UTI: 'image/png',
         };
-        await Sharing.shareAsync(qrCodePath, options); // Share the QR code image to different platforms    
+        await Sharing.shareAsync(qrCodePath, options); // Share the QR code image to different platforms
       } catch (error) {
         Alert.alert('Error', error.message); // Alert the error message if there is an error
       } finally {
         setIsSharingInProgress(false); // Set the sharing in progress to false
       }
     } else {
-      // If the platform is not android
+      // If the platform is not Android
       try {
-        await Sharing.shareAsync(QRref.current); // Share the QR code image to different platforms
+        const qrCodeData = await FileSystem.readAsStringAsync(QRref.current, {
+          encoding: FileSystem.EncodingType.Base64,
+        }); // Read the QR code image as base64 data
+        const base64Data = `data:image/png;base64,${qrCodeData}`; // Add the base64 data URI prefix
+        await Sharing.shareAsync(base64Data); // Share the QR code image to different platforms
       } catch (error) {
         Alert.alert('Error', error.message); // Alert the error message if there is an error
       }
-
     }
-
-
+  
     setVisible(!visible); // Set the visibility of the BottomSheet to false after sharing
-
   };
 
   const [refreshing, setRefreshing] = useState(false);
