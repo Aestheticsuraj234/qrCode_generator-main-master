@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Image, TextInput, Pressable } from 'react-native'
 import React from 'react'
 import { Entypo } from '@expo/vector-icons';
+
 const Login = () => {
     const [text, onChangeText] = React.useState('');
     return (
@@ -11,7 +12,6 @@ const Login = () => {
                 source={require('../../../assets/Svg/Login_svg.png')}
 
             />
-
 
             {/* Form COntainer */}
 

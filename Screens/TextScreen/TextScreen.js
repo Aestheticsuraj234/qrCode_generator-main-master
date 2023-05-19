@@ -1,14 +1,53 @@
-import { Pressable, StyleSheet, Text, TextInput, View, ScrollView, RefreshControl } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View, ScrollView, RefreshControl, Platform, Alert } from 'react-native';
 import QRCodeComponent from '../../Components/QRCodeComponent';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { QrCodeContext } from '../../context/QrCodeContext';
 import { useNavigation } from '@react-navigation/native';
+import { BottomSheet } from 'react-native-btr';
 import { Entypo } from '@expo/vector-icons';
-import { ViewShot } from 'react-native-view-shot';
-
+import * as FileSystem from 'expo-file-system';
+import { SocialIcon } from 'react-native-elements';
 import * as Sharing from 'expo-sharing';
 
 export default function TextScreen() {
+  const [visible, setVisible] = useState(false);
+  const [isSharingInProgress, setIsSharingInProgress] = useState(false);
+
+  const shareQrCode = async () => {
+    // Function to share the QR code image to different platforms using expo sharing
+
+    if (Platform.OS === 'android' && !isSharingInProgress) {
+      // Check if the platform is android and sharing is not in progress
+      try {
+
+        setIsSharingInProgress(true); // Set the sharing in progress to true
+        const qrCodePath = FileSystem.documentDirectory + 'QRCode.png';
+        const options = {
+
+          dialogTitle: 'Share QR Code',
+          UTI: 'image/png',
+        };
+        await Sharing.shareAsync(qrCodePath, options); // Share the QR code image to different platforms    
+      } catch (error) {
+        Alert.alert('Error', error.message); // Alert the error message if there is an error
+      } finally {
+        setIsSharingInProgress(false); // Set the sharing in progress to false
+      }
+    } else {
+      // If the platform is not android
+      try {
+        await Sharing.shareAsync(QRref.current); // Share the QR code image to different platforms
+      } catch (error) {
+        Alert.alert('Error', error.message); // Alert the error message if there is an error
+      }
+
+    }
+
+
+    setVisible(!visible); // Set the visibility of the BottomSheet to false after sharing
+
+  };
+
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const onRefresh = useCallback(() => {
@@ -31,7 +70,7 @@ export default function TextScreen() {
   }, [navigation]);
 
   const maxChars = 300;
-  const 
+  const {
     text,
     saveQRCode,
     QR,
@@ -43,18 +82,9 @@ export default function TextScreen() {
     qrCodeSize,
   } = useContext(QrCodeContext);
 
-  const handleShareQr = async () => {
-    if (QR) {
-      try {
-        const uri = await QRref.capture();
-        await Sharing.shareAsync(uri);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
+  // function to handle share Qrcode image to different platforms using expo sharing
 
- 
+
   return (
     <ScrollView
       refreshControl={
@@ -89,29 +119,25 @@ export default function TextScreen() {
           >
             {QR && (
               <>
-                <ViewShot
-                  ref={QRref}
-                  options={{ format: 'png', quality: 1 }}
-                >
-                  <QRCodeComponent
-                    key={QR}
-                    size={qrCodeSize}
-                    qrCodeValue={QR}
-                    getRef={setQRref}
-                    backgroundColor={'#fff'}
-                  />
-                </ViewShot>
+                <QRCodeComponent
+                  key={QR}
+                  size={qrCodeSize}
+                  qrCodeValue={QR}
+                  getRef={setQRref}
+                  backgroundColor={'#fff'}
+                />
+
                 <Entypo
                   name="share"
                   size={24}
                   color="white"
-                  onPress={handleShareQr}
                   style={{
                     backgroundColor: '#7286d3',
                     padding: 10,
                     borderRadius: 50,
                     textAlign: 'center',
                   }}
+                  onPress={shareQrCode}
                 />
               </>
             )}
@@ -127,6 +153,111 @@ export default function TextScreen() {
           </Text>
         )}
         {QR && <Text style={styles.instruction}>Click The <Text style={styles.icon}>QR</Text> Code to save it</Text>}
+        <BottomSheet
+          visible={visible}
+          //setting the visibility state of the bottom shee
+          onBackButtonPress={shareQrCode}
+          //Toggling the visibility state on the click of the back botton
+          onBackdropPress={shareQrCode}
+        //Toggling the visibility state on the clicking out side of the sheet
+        // Toggling the visibility state on clicking outside of the sheet
+        >
+          {/*Bottom Sheet inner View*/}
+          <View style={styles.bottomNavigationView}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  padding: 20,
+                  fontSize: 20,
+                }}>
+                Share Using
+              </Text>
+              <View style={{ flex: 1, flexDirection: 'row' }}>
+                <SocialIcon
+                  //Social Icon using react-native-elements
+                  type="twitter"
+                  //Type of Social Icon
+                  onPress={() => {
+                    //Action to perform on press of Social Icon
+                    shareQrCode();
+                    alert('twitter');
+                  }}
+                />
+                <SocialIcon
+                  type="gitlab"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('gitlab');
+                  }}
+                />
+                <SocialIcon
+                  type="medium"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('medium');
+                  }}
+                />
+                <SocialIcon
+                  type="facebook"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('facebook');
+                  }}
+                />
+                <SocialIcon
+                  type="instagram"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('instagram');
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1, flexDirection: 'row' }}>
+                <SocialIcon
+                  type="facebook"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('facebook');
+                  }}
+                />
+                <SocialIcon
+                  type="instagram"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('instagram');
+                  }}
+                />
+                <SocialIcon
+                  type="gitlab"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('gitlab');
+                  }}
+                />
+                <SocialIcon
+                  type="twitter"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('twitter');
+                  }}
+                />
+                <SocialIcon
+                  type="medium"
+                  onPress={() => {
+                    shareQrCode();
+                    alert('medium');
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        </BottomSheet>
       </View>
     </ScrollView>
   );
